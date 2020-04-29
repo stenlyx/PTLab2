@@ -8,7 +8,6 @@ struct list {
     struct list *ptr;
 };
 
-
 struct list* init(int a)
 {
     struct list* head = (struct list*)malloc(sizeof(struct list));
@@ -17,125 +16,107 @@ struct list* init(int a)
     return (head);
 }
 
-
-
 void listprint(struct list* lst)
 {
     if (lst == NULL) {
-        printf("Empty list ;p\n");
+        printf("Empty list ;p");
         return;
     }
     struct list* p;
-    p = lst;
-    do {
-        printf("%d ", p->field);
-        p = p->ptr;
-    } while (p != NULL);
+    for (p = lst; p != NULL; p = p->ptr)
+        printf ("%d ", p->field);
 }
 
 struct list* add(struct list* head, int data)
 {
-    struct list* temp, * p;
-    p = head->ptr;
+    struct list* temp;
     temp = (struct list*)malloc(sizeof(struct list));
     head->ptr = temp;
     temp->field = data;
-    temp->ptr = p;
+    temp->ptr = NULL;
     return (temp);
 }
 
-int remove_last(struct list* head) {
-    int retval = 0;
+int remove_last(struct list* head)
+{
+    if (head == NULL)
+        return NULL;
     if (head->ptr == NULL) {
-        retval = head->field;
         free(head);
-        return retval;
+        return 0;
     }
-    struct list * current = head;
-    while (current->ptr->ptr != NULL) {
+    struct list *current = head;
+    while (current->ptr->ptr != NULL)
         current = current->ptr;
-    }
-    retval = current->ptr->field;
     free(current->ptr);
     current->ptr = NULL;
-    return retval;
+    return 0;
 }
 
 struct list *destroyListRecursive(struct list * head)
 {
-
     if (head != NULL) {
         destroyListRecursive(head->ptr);
         free(head);
     }
-
     return NULL;
 }
 
 int searchElement(struct list *head, int value)
 {
     if(head == NULL) {
-        printf("Empty list ;p");
+        printf("Empty list ;p\n");
         return -1;
     }
     if( head->ptr == NULL)
         return (head->field == value) ? 0: -1;
-
-    int position = 0;
-    struct list *cur = head;
-    do {
-        if( cur->field == value )
-            return position;
-        else
-            position++;
-        cur = cur->ptr;
-    } while( cur != NULL );
+    struct list *current = head;
+    for (; current !=NULL; current = current->ptr)
+        if( current->field == value )
+            return 0;
     return -1;
 };
 
 
 int main()
 {
-struct list* head, * r;
-int a, n, e, l;
+struct list* head;
+int a;
 struct  list* p1 = (struct list*)malloc(sizeof(struct list));
-head = 0;
-p1 = 0;
+head = NULL;
+p1->field = NULL;
+
+printf( "\nMenu\n" );
+printf( "1. Create the first element of the list\n" );
+printf( "2. Add a new element to the end of the list\n" );
+printf( "3. Delete an element from the end of the list\n" );
+printf( "4. Look through the list\n" );
+printf( "5. DELETE the list\n" );
+printf( "6. Search for an element of the list\n" );
+printf( "7. Exit\n" );
 
 int input;
 while (input != 7) {
-    printf( "\nMenu\n" );
-    printf( "1. Create the first element of the list\n" );
-    printf( "2. Add a new element to the end of the list\n" );
-    printf( "3. Delete an element from the end of the list\n" );
-    printf( "4. Look through the list\n" );
-    printf( "5. DELETE the list\n" );
-    printf( "6. Search for an element of the list\n" );
-    printf( "7. Exit\n" );
-    printf( "Print 1/2/3/4/5/6/7: " );
-scanf("%d", &input);
+        printf( "\nPrint 1/2/3/4/5/6/7: " );
+        scanf("%d", &input);
 switch (input) {
-    case 1: // Create the first element of the list
-        printf("How many elements do you want in your first list?: ");
-        scanf("%d", &n);
-        for (int i = 0; i < n; i++)
-        {
-            printf("Add an element: ");
-            scanf("%d", &a);
-            if (i == 0)  {
-                head = p1 = init(a);
-                head = p1;
-            }
-            else
-                p1 = add(p1, a);
-        }
-        break;
-    case 2: // Add a new element to the end of the list
-        printf("\nAdd a value: ");
+    case 1: /* Create the first element of the list*/
+        printf("Add an element: ");
         scanf("%d", &a);
-        if (head == NULL) {
+        head = p1 = init(a);
+        head = p1;
+        listprint(head);
+        putchar('\n');
+        break;
+    case 2: /* Add a new element to the end of the list*/
+        printf("Add a value: ");
+        scanf("%d", &a);
+        if (head == NULL)
+        {
             head = p1 = init(a);
             head = p1;
+            listprint(head);
+            putchar('\n');
         }
         else {
             p1 = add(p1, a);
@@ -143,38 +124,36 @@ switch (input) {
             putchar('\n');
         }
         break;
-    case 3: // Delete a element from the end of the list
+    case 3: /* Delete a element from the end of the list*/
         remove_last(head);
-        putchar('\n');
         listprint(head);
         putchar('\n');
         break;
-    case 4: // Look through the list
-        putchar('\n');
+    case 4: /* Look through the list*/
         listprint(head);
         putchar('\n');
         break;
-    case 5: // DELETE the list
+    case 5: /* DELETE the list*/
         head = destroyListRecursive(head);
-        putchar('\n');
         listprint(head);
+        putchar('\n');
         break;
-    case 6: // Search for an element in the list
+    case 6: /* Search for an element in the list*/
         printf("Enter an element: ");
         scanf("%d", &a);
-        if (searchElement(head, a) != -1)
-            printf("An element has been found, position %d\n", searchElement(head, a)+1);
+        if (searchElement(head, a) == 0)
+            printf("An element has been found");
         else
             printf("Couldn't find an element :c");
+        putchar('\n');
         break;
-    case 7: // Exit
+    case 7: /* Exit*/
         break;
     default:
-        printf("/nWrong input!");
+        printf("Wrong input!\n");
         break;
         }
 }
 free(p1);
-getchar();
 return 0;
 }
